@@ -10,8 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@chrisoakman/chessboardjs": "^1.0.0",
+    "chess.js": "^0.13.4",
     "react": "^18.2.0",
+    "react-chessboard": "^4.6.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
