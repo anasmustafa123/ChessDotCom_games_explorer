@@ -1,10 +1,14 @@
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 async function fetchPlayerProfileInfo(username) {
   const url = `https://api.chess.com/pub/player/${username}`;
 
   const response = await fetch(url);
   if (!response.ok) {
+    toast.error("Error Enter correct chess.com username.");
     throw new Error(`Error getting profile info: ${response.status}`);
   }
+  toast.success("correct username wait for game loading....");
   const data = await response.json();
   return data;
 }
@@ -27,12 +31,13 @@ async function fetchChessGamesonMonth(username, year, month) {
   try {
     const response = await fetch(url);
     if (!response.ok) {
+      toast.error("Error Enter correct chess.com username..");
       throw new Error(`Error fetching games: ${response.status}`);
     }
     const data = await response.json();
     return data;
-  } catch (error) {   
-    console.error("Error:", error);
+  } catch (error) {
+    toast.error("Error Enter correct chess.com username...");
     return null; // Or handle the error differently
   }
 }
@@ -97,7 +102,7 @@ async function getAllPlayerGames(
   username,
   smonth,
   syear,
-  emonth, 
+  emonth,
   eyear,
   callback1,
   callback2

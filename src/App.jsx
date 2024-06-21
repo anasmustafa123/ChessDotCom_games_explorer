@@ -1,16 +1,17 @@
 import "./styles/app.css";
 import { useEffect, useState } from "react";
 import ChessBoard from "./components/ChessBoard";
-import { totalPgn, reduceOnMove } from "./components/modifyExplore";
+import { reduceOnMove } from "./components/modifyExplore";
 import "./styles/react_circular_progressbar.css";
 import RightSidebar from "./components/RightSidebar";
 import img from "./assets/chessdotcomlogo.png";
-
+import { ToastContainer } from "react-toastify";
 export default function App() {
   const [totalGames, setTotalGames] = useState([]);
   const [totalGamesSim, setTotalGamesSim] = useState([]);
   const [preFiltering, setPreFiltering] = useState([]);
   const [postFiltering, setpostFiltering] = useState([]);
+  const [postFilteringFlag, setpostFilteringFlag] = useState(false);
   const [explorerArray, setExplorerArray] = useState([]);
   const [currentMove, setCurrentMove] = useState("");
   const [movesSeq, setMoveSeq] = useState([]);
@@ -59,22 +60,13 @@ export default function App() {
     let x = reduceOnMove(
       newPreFilter,
       movesSeq[newmovenum - 2],
-      newmovenum-1,
+      newmovenum - 1,
       false
     );
     setExplorerArray(x.explorerArray);
     return newPreFilter;
   };
 
-  const makeMove = (games, move, moveNum) => {
-    let fullgames = games.filter((game) => {
-      if (!game.moves[moveNum - 1]) {
-        return false;
-      }
-      return game.moves[moveNum - 1].toLowerCase() == move.toLowerCase();
-    });
-    return fullgames;
-  };
 
   return (
     <>
@@ -104,9 +96,18 @@ export default function App() {
           setloaded={setloaded}
         ></RightSidebar>
       </div>
-
-      {/* <Header></Header> */}
-      {/*  <Chess_Line moveNum={1} move="c4" playedCount={200} drawPerc={20} blackPerc={20} whitePerc={60}></Chess_Line> */}
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </>
   );
 }
