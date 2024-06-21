@@ -1,7 +1,12 @@
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap");
 h1 {
-  color: #fff;
-  font-weight: 300;
+  color: black;
+  text-align: center;
+  font-weight: 600;
   margin-bottom: 2rem !important;
+}
+body{
+  font-family: "Merriweather", serif;
 }
 .header-section {
   max-width: 900px;
@@ -20,4 +25,51 @@ input {
     Helvetica, Arial, sans-serif;
   font-size: 1.4rem;
 }
+input[type="month"] {
+  font-size: 1rem;
+}
 
+.mainContainer {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  min-height: 100vh;
+  background-color: rgb(44, 44, 44);
+  padding: 1rem;
+}
+
+.logo {
+  width: 300px;
+}
+
+.leftsidebar {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  margin-top: 1rem;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  padding-top: 1rem;
+  gap: 2rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 1650px) {
+  .leftsidebar {
+    display: none;
+  }
+}
+@media screen and (max-width: 1160px) {
+  .mainContainer {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 1fr 1fr;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  input {
+    font-size: 1.1rem;
+    padding: 0 !important;
+  }
+}

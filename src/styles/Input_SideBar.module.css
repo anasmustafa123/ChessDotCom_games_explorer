@@ -1,5 +1,4 @@
 .sidebar_container {
-  width: 500px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -7,22 +6,6 @@
   justify-content: center;
   gap: 3rem;
 }
-.submitBtn {
-  background-color: #5d9948;
-  border: none;
-  border-radius: 5px;
-  color: white;
-  font-size: 22px;
-  width: 120px;
-  height: 50px;
-  align-self: center;
-}
-
-.submitBtn:hover{
-    background-color: #76b45f;
-    cursor: pointer;
-}
-
 
 .periodContainer {
   display: flex;
@@ -35,4 +18,9 @@
 }
 .dateContainer {
   display: flex;
+}
+@media screen and (max-width: 600px) {
+  .label_horizontal {
+    font-size: 18px;
+  }
 }

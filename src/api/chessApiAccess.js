@@ -1,16 +1,12 @@
 async function fetchPlayerProfileInfo(username) {
   const url = `https://api.chess.com/pub/player/${username}`;
 
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Error getting profile info: ${response.status}`);
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error:", error);
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Error getting profile info: ${response.status}`);
   }
+  const data = await response.json();
+  return data;
 }
 
 async function getPlayerProfileInfo(username) {
@@ -35,30 +31,95 @@ async function fetchChessGamesonMonth(username, year, month) {
     }
     const data = await response.json();
     return data;
-  } catch (error) {
+  } catch (error) {   
     console.error("Error:", error);
     return null; // Or handle the error differently
   }
 }
 
-async function getAllPlayerGames(username, loginMonth, loginYear) {
+const minimizeData = (username, monthGames) => {
+  let minimizedData = [];
+  let sample = {
+    result: "",
+    color: "",
+    pgn: "",
+    opponentRating: 0,
+    time_class: "",
+  };
+  monthGames.forEach((game) => {
+    sample = {
+      result: "",
+      color: "",
+      pgn: "",
+      opponentRating: 0,
+      time_class: "",
+    };
+    if (game.black.result === "win") {
+      sample.result = "black";
+    } else if (
+      game.black.result === "agreed" ||
+      game.black.result === "repetition" ||
+      game.black.result === "stalemate" ||
+      game.black.result === "timevsinsufficient" ||
+      game.black.result === "insufficient"
+    ) {
+      sample.result = "draw";
+    } else {
+      sample.result = "white";
+    }
+    if (game.black.username === username) {
+      sample.color = "black";
+      sample.opponentRating = game.white.rating;
+    } else {
+      sample.color = "white";
+      sample.opponentRating = game.black.rating;
+    }
+    sample.time_class = game.time_class;
+    sample.pgn = game.pgn;
+
+    minimizedData.push(sample);
+  });
+  return minimizedData;
+};
+
+/**
+ * A button that increments a counter when clicked.
+ * @param {String} username
+ * @param {Number} smonth
+ * @param {Number} syear
+ * @param {Number} emonth
+ * @param {Number} eyear
+ * @param {callback} callback1 (require no params) will be called each month
+ * @param {callback} callback2 (takes games loaded in this month) will be called each month
+ * @returns {Array} allGames
+ */
+async function getAllPlayerGames(
+  username,
+  smonth,
+  syear,
+  emonth, 
+  eyear,
+  callback1,
+  callback2
+) {
   let allGames = [];
-  const date = new Date();
-  let currentYear = date.getFullYear();
-  let currentMonth = date.getMonth() + 1;
-  for (let startYear = loginYear; startYear <= currentYear; startYear++) {
+  for (let startYear = syear; startYear <= eyear; startYear++) {
     // if current year last month is the current month
-    let endMonth = startYear == currentYear ? currentMonth : 12;
-    for (let startMonth = loginMonth; startMonth <= endMonth; startMonth++) {
+    let endMonth = startYear == eyear ? emonth : 12;
+    for (let startMonth = smonth; startMonth <= endMonth; startMonth++) {
       let currentMonthGames = await fetchChessGamesonMonth(
         username,
         startYear,
         startMonth
       );
-      allGames = allGames.concat(currentMonthGames["games"]);
+      allGames = allGames.concat(
+        minimizeData(username, currentMonthGames["games"])
+      );
+      callback1();
+      callback2(currentMonthGames["games"].length);
     }
     // only the first year might not start from january
-    loginMonth = 1;
+    smonth = 1;
   }
   return allGames;
 }

@@ -1,0 +1,18 @@
+h1{
+
+}
+header{
+  background: #312e2b;
+  box-shadow: -3px 31px 50px -2px #0006;
+  margin-bottom: 3rem;
+  overflow: hidden;
+  padding: 2rem 0;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+.mainContainer{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}

@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
-
-export default function ChessBoard() {
+import "../styles/chessboard.css";
+export default function ChessBoard({
+  setCurrentMove,
+  setUpdateToggle,
+  resetExplorerArray,
+  setMoveSeq,
+  undoExploreArray,
+}) {
   const [game, setGame] = useState(new Chess());
   const [moveFrom, setMoveFrom] = useState("");
   const [moveTo, setMoveTo] = useState(null);
@@ -10,7 +16,45 @@ export default function ChessBoard() {
   const [rightClickedSquares, setRightClickedSquares] = useState({});
   const [moveSquares, setMoveSquares] = useState({});
   const [optionSquares, setOptionSquares] = useState({});
+  const [chessboardwidth, setChessboardWidth] = useState(1000);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 1970) {
+        setChessboardWidth(1000);
+      } else if (window.innerWidth > 1300) {
+        setChessboardWidth(800);
+      } else if (window.innerWidth > 760) {
+        setChessboardWidth(700);
+      } else if (window.innerWidth > 600) {
+        setChessboardWidth(500);
+      } else if (window.innerWidth > 430) {
+        setChessboardWidth(400);
+      } else {
+        setChessboardWidth(300);
+      }
+    };
 
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+
+    // Call handler right away so state gets updated with initial window size
+    if (window.innerWidth > 1970) {
+      setChessboardWidth(1000);
+    } else if (window.innerWidth > 1300) {
+      setChessboardWidth(800);
+    } else if (window.innerWidth > 760) {
+      setChessboardWidth(700);
+    } else if (window.innerWidth > 600) {
+      setChessboardWidth(500);
+    } else if (window.innerWidth > 430) {
+      setChessboardWidth(400);
+    } else {
+      setChessboardWidth(300);
+    }
+
+    // Remove event listener on cleanup
+    return () => window.removeEventListener("resize", setChessboardWidth);
+  }, []);
   // modify the game state after each update
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -81,8 +125,30 @@ export default function ChessBoard() {
         setMoveFrom(hasMoveOptions ? square : "");
         return;
       }
-
-      // if valid dist square
+      setMoveTo(square);
+      if (
+        (foundMove.color === "w" &&
+          foundMove.piece === "p" &&
+          square[1] === "8") ||
+        (foundMove.color === "b" &&
+          foundMove.piece === "p" &&
+          square[1] === "1")
+      ) {
+        setShowPromotionDialog(true);
+        return;
+      }
+      const move = {
+        from: moveFrom,
+        to: square,
+        promotion: "q",
+      };
+      makeAMove(move);
+      if (move === null) {
+        const hasMoveOptions = getMoveOptions(square);
+        if (hasMoveOptions) setMoveFrom(square);
+        return;
+      }
+      /*       // if valid dist square
       setMoveTo(square);
 
       // if promotion row
@@ -111,7 +177,7 @@ export default function ChessBoard() {
         return;
       }
 
-      setGame(gameCopy);
+      setGame(gameCopy); */
 
       setMoveFrom("");
       setMoveTo(null);
@@ -122,16 +188,13 @@ export default function ChessBoard() {
 
   function onPromotionPieceSelect(piece) {
     if (piece) {
-      const gameCopy = { ...game };
-      gameCopy.move({
+      const move = {
         from: moveFrom,
         to: moveTo,
         promotion: piece[1].toLowerCase() ?? "q",
-      });
-      setGame(gameCopy);
-      setTimeout(makeRandomMove, 300);
+      };
+      makeAMove(move);
     }
-
     setMoveFrom("");
     setMoveTo(null);
     setShowPromotionDialog(false);
@@ -154,16 +217,17 @@ export default function ChessBoard() {
   function makeAMove(move) {
     const gameCopy = { ...game };
     const result = gameCopy.move(move);
-    setGame(gameCopy);
-    return result; // null if the move was illegal, the move object if the move was legal
-  }
 
-  function makeRandomMove() {
-    const possibleMoves = game.moves();
-    if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
-      return; // exit if the game is over
-    const randomIndex = Math.floor(Math.random() * possibleMoves.length);
-    makeAMove(possibleMoves[randomIndex]);
+    if (result) {
+      setCurrentMove(result.san);
+      setMoveSeq((old) => {
+        return [...old, result.san];
+      });
+      setUpdateToggle((prev) => !prev);
+      setGame(gameCopy);
+    }
+
+    return result; // null if the move was illegal, the move object if the move was legal
   }
 
   function onDrop(sourceSquare, targetSquare) {
@@ -178,23 +242,22 @@ export default function ChessBoard() {
     //setTimeout(makeRandomMove, 200);
     return true;
   }
-  const boardWrapper = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  };
 
   const buttonStyle = {
     marginTop: "10px",
     padding: "10px 20px",
     fontSize: "16px",
+    backgroundColor: "#5d9948",
+    border: "none",
+    borderRadius: "5px",
+    color: "white",
   };
   return (
-    <div style={boardWrapper}>
+    <div className="boardWrapper">
       <Chessboard
         id="ClickToMove"
         animationDuration={200}
-        boardWidth={750}
+        boardWidth={chessboardwidth}
         arePremovesAllowed={true}
         arePiecesDraggable={true}
         onPieceDrop={onDrop}
@@ -214,32 +277,36 @@ export default function ChessBoard() {
         promotionToSquare={moveTo}
         showPromotionDialog={showPromotionDialog}
       />
-      <button
-        style={buttonStyle}
-        onClick={() => {
-          safeGameMutate((game) => {
-            game.reset();
-          });
-          setMoveSquares({});
-          setOptionSquares({});
-          setRightClickedSquares({});
-        }}
-      >
-        reset
-      </button>
-      <button
-        style={buttonStyle}
-        onClick={() => {
-          safeGameMutate((game) => {
-            game.undo();
-          });
-          setMoveSquares({});
-          setOptionSquares({});
-          setRightClickedSquares({});
-        }}
-      >
-        undo
-      </button>
+      <div style={{ display: "flex", gap: "1rem" }}>
+        <button
+          style={buttonStyle}
+          onClick={() => {
+            safeGameMutate((game) => {
+              game.reset();
+              resetExplorerArray();
+            });
+            setMoveSquares({});
+            setOptionSquares({});
+            setRightClickedSquares({});
+          }}
+        >
+          reset
+        </button>
+        <button
+          style={buttonStyle}
+          onClick={() => {
+            safeGameMutate((game) => {
+              game.undo();
+              undoExploreArray();
+            });
+            setMoveSquares({});
+            setOptionSquares({});
+            setRightClickedSquares({});
+          }}
+        >
+          undo
+        </button>
+      </div>
     </div>
   );
 }
