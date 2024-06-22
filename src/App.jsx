@@ -22,51 +22,105 @@ export default function App() {
 
   useEffect(() => {
     if (loaded && currentMove !== "") {
-      let x = reduceOnMove(preFiltering, currentMove, currentMoveNum, true);
+      let x = [];
+      if (postFilteringFlag) {
+        x = reduceOnMove(
+          postFiltering,
+          currentMove,
+          currentMoveNum,
+          reduceSingle
+        );
+        setpostFiltering(x.gamesAafterMove);
+      } else {
+        x = reduceOnMove(
+          preFiltering,
+          currentMove,
+          currentMoveNum,
+          reduceSingle
+        );
+        setPreFiltering(x.gamesAafterMove);
+      }
       setExplorerArray(x.explorerArray);
-      setPreFiltering(x.gamesAafterMove);
       setCurrentMoveNum((prevNum) => prevNum + 1);
     }
   }, [updateToggle]);
+
+  useEffect(() => {
+    let x = [];
+    if (postFilteringFlag) {
+      x = reduceOnMove(postFiltering, "", currentMoveNum - 1, reduceMultible);
+      setpostFiltering(x.gamesAafterMove);
+    } else {
+      x = reduceOnMove(preFiltering, "", currentMoveNum - 1, reduceMultible);
+      setPreFiltering(x.gamesAafterMove);
+    }
+
+    setExplorerArray(x.explorerArray);
+  }, [postFilteringFlag]);
 
   const resetExplorerArray = () => {
     setPreFiltering(totalGamesSim);
     setCurrentMoveNum(1);
     setCurrentMove("");
-    setUpdateToggle((prev) => !prev);
+    //setUpdateToggle((prev) => !prev);
     setMoveSeq([]);
-    let x = reduceOnMove(totalGamesSim, "", 0);
+    let x = reduceOnMove(totalGamesSim, "", 0, (games) => {
+      return games;
+    });
     setExplorerArray(x.explorerArray);
   };
 
   const undoExploreArray = () => {
     if (currentMoveNum == 1) return;
-    let temp = [...totalGamesSim];
     setCurrentMove(movesSeq.at(-2));
     setMoveSeq((old) => old.slice(0, -1));
+    setCurrentMoveNum((old) => old - 1);
+    let x = reduceOnMove(
+      [...totalGamesSim],
+      "",
+      currentMoveNum - 2,
+      reduceUndo
+    );
+    if (postFilteringFlag) {
+      setpostFiltering(x.gamesAafterMove);
+    } else {
+      setPreFiltering(x.gamesAafterMove);
+    }
+    setExplorerArray(x.explorerArray);
+  };
+
+  const reduceSingle = (games, move, moveNum) => {
+    return games.filter((game) => {
+      if (!game.moves[moveNum - 1]) {
+        return false;
+      }
+      return game.moves[moveNum - 1].toLowerCase() == move.toLowerCase();
+    });
+  };
+
+  const reduceMultible = (games, move, moveNum) => {
     let count = 0;
-    let newmovenum = currentMoveNum - 1;
-    setCurrentMoveNum(newmovenum);
-    let newPreFilter = temp.filter((game, index) => {
+    return games.filter((game) => {
       count = 0;
-      for (let i = 0; i < newmovenum - 1; i++) {
+      movesSeq.forEach((move, i) => {
+        game.moves[i] == move ? count++ : "";
+      });
+      return count == moveNum - 1;
+    });
+  };
+
+  const reduceUndo = (games, move, moveNum) => {
+    let count = 0;
+    return games.filter((game, index) => {
+      count = 0;
+      for (let i = 0; i < moveNum; i++) {
         if (game.moves[i] == movesSeq[i]) {
           count++;
         }
       }
-      return count == newmovenum - 1;
+      return count == moveNum;
     });
-    setPreFiltering(newPreFilter);
-    let x = reduceOnMove(
-      newPreFilter,
-      movesSeq[newmovenum - 2],
-      newmovenum - 1,
-      false
-    );
-    setExplorerArray(x.explorerArray);
-    return newPreFilter;
   };
-
 
   return (
     <>

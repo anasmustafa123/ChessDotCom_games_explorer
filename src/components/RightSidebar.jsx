@@ -142,7 +142,9 @@ export default function RightSidebar({
                           prefilteringdata,
                           "",
                           0,
-                          false
+                          (games, move, gameNum) => {
+                            return games;
+                          }
                         ).explorerArray;
                         setExplorerArray(x);
                       }

@@ -36,19 +36,11 @@ const getRatio = (currentGames, move, moveNum) => {
     draw: Number(draw / filtered.length) * 100,
   };
 };
-
-const reduceOnMove = (games, move, moveNum, flag) => {
-  let fullgames = [...games];
+const reduceOnMove = (games, move, moveNum, callback) => {
+  let fullgames = callback(games, move, moveNum);
+  console.log({ fullgames });
+  console.log({ moveNum });
   if (games.length == 0) return { explorerArray: [], gamesAafterMove: [] };
-  if (moveNum !== 0 && flag) {
-    // remove the game that dont have the move
-    fullgames = games.filter((game) => {
-      if (!game.moves[moveNum - 1]) {
-        return false;
-      }
-      return game.moves[moveNum - 1].toLowerCase() == move.toLowerCase();
-    });
-  }
   if (fullgames.length == 0) return { explorerArray: [], gamesAafterMove: [] };
   let count = 1;
   let explorerArray = [];
@@ -62,6 +54,7 @@ const reduceOnMove = (games, move, moveNum, flag) => {
     }
     return a.moves[moveNum].localeCompare(b.moves[moveNum]);
   });
+  console.log({ tempArr });
   tempArr.forEach((value, index) => {
     // skip the first element
     if (
@@ -118,6 +111,8 @@ const reduceOnMove = (games, move, moveNum, flag) => {
   explorerArray.sort((a, b) => {
     return b.n - a.n;
   });
+  console.log({ explorerArray });
   return { explorerArray: explorerArray, gamesAafterMove: fullgames };
 };
+
 export { totalPgn, reduceOnMove };

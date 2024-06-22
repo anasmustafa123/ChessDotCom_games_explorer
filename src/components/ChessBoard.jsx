@@ -148,37 +148,6 @@ export default function ChessBoard({
         if (hasMoveOptions) setMoveFrom(square);
         return;
       }
-      /*       // if valid dist square
-      setMoveTo(square);
-
-      // if promotion row
-      if (
-        (foundMove.color === "w" &&
-          foundMove.piece === "p" &&
-          square[1] === "8") ||
-        (foundMove.color === "b" &&
-          foundMove.piece === "p" &&
-          square[1] === "1")
-      ) {
-        setShowPromotionDialog(true);
-        return;
-      }
-
-      const gameCopy = { ...game };
-      const move = gameCopy.move({
-        from: moveFrom,
-        to: square,
-        promotion: "q",
-      });
-
-      if (move === null) {
-        const hasMoveOptions = getMoveOptions(square);
-        if (hasMoveOptions) setMoveFrom(square);
-        return;
-      }
-
-      setGame(gameCopy); */
-
       setMoveFrom("");
       setMoveTo(null);
       setOptionSquares({});
