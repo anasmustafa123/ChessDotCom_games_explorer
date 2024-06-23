@@ -3,19 +3,18 @@ import { Chess } from "chess.js";
 const totalPgn = (totalGames) => {
   const chess = new Chess();
   let pgnsAnResult = [];
-  totalGames.forEach((game) => {
+  totalGames.forEach((game, index) => {
     if (game.pgn) {
       chess.load_pgn(game.pgn);
     }
     pgnsAnResult.push({
+      index: index,
       result: game.result,
       moves: chess.history().toString().split(","),
     });
   });
   return pgnsAnResult;
 };
-
-const filterDate = () => {};
 
 const getRatio = (currentGames, move, moveNum) => {
   let black = 0,
@@ -36,10 +35,18 @@ const getRatio = (currentGames, move, moveNum) => {
     draw: Number(draw / filtered.length) * 100,
   };
 };
+/**
+ * 
+ * @param {Array} games 
+ * @param {String} move 
+ * @param {Number} moveNum 
+ * @param {Function} callback callback used to filter the games and is called first
+ * @returns { explorerArray, gamesAafterMove }
+ * {gamesAfterMove} are the games array after filtering using the callback function 
+ * {explorerArray} are the top used lines
+ */
 const reduceOnMove = (games, move, moveNum, callback) => {
   let fullgames = callback(games, move, moveNum);
-  console.log({ fullgames });
-  console.log({ moveNum });
   if (games.length == 0) return { explorerArray: [], gamesAafterMove: [] };
   if (fullgames.length == 0) return { explorerArray: [], gamesAafterMove: [] };
   let count = 1;
@@ -54,7 +61,6 @@ const reduceOnMove = (games, move, moveNum, callback) => {
     }
     return a.moves[moveNum].localeCompare(b.moves[moveNum]);
   });
-  console.log({ tempArr });
   tempArr.forEach((value, index) => {
     // skip the first element
     if (

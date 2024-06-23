@@ -265,6 +265,7 @@ export default function ChessBoard({
           style={buttonStyle}
           onClick={() => {
             safeGameMutate((game) => {
+              console.log("undo")
               game.undo();
               undoExploreArray();
             });

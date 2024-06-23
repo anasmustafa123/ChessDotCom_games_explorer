@@ -7,23 +7,30 @@ import { getPlayerProfileInfo, getAllPlayerGames } from "../api/chessApiAccess";
 import { totalPgn, reduceOnMove } from "./modifyExplore";
 
 export default function RightSidebar({
+  username,
+  setUserName,
   setTotalGames,
   setPreFiltering,
   setExplorerArray,
   setTotalGamesSim,
-  currentMove,
-  setCurrentMove,
-  currentMoveNum,
-  setCurrentMoveNum,
   inlineStyles,
   explorerArray,
   loaded,
   setloaded,
+  filter,
+  setfilterby,
+  addToLocalStorage,
+  inputEndDate,
+  setInputEndDate,
+  inputStartDate,
+  setInputStartDate,
+  setpostFilteringFlag,
+  setpostFiltering,
+  currentMove,
+  currentMoveNum,
+  preFiltering
 }) {
-  const [username, setUserName] = useState("");
   const [gamePeriod, setGamePeriod] = useState("all");
-  const [inputStartDate, setInputStartDate] = useState("");
-  const [inputEndDate, setInputEndDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [maxRequestCount, setMaxRequestCount] = useState(0);
   const [requestCount, setRequestCount] = useState(0);
@@ -142,10 +149,16 @@ export default function RightSidebar({
                           prefilteringdata,
                           "",
                           0,
-                          (games, move, gameNum) => {
+                          (games) => {
                             return games;
                           }
                         ).explorerArray;
+                        addToLocalStorage(
+                          allGames,
+                          prefilteringdata,
+                          { month: finalDate.smonth, year: finalDate.syear },
+                          { year: finalDate.eyear, month: finalDate.emonth }
+                        );
                         setExplorerArray(x);
                       }
                     })
@@ -167,6 +180,14 @@ export default function RightSidebar({
           inputEndDate={inputEndDate}
           inputStartDate={inputStartDate}
           explorerArray={explorerArray}
+          filter={filter}
+          setfilterby={setfilterby}
+          setpostFilteringFlag={setpostFilteringFlag}
+          setpostFiltering={setpostFiltering}
+          currentMove={currentMove}
+          currentMoveNum={currentMoveNum}
+          setExplorerArray={setExplorerArray}
+          preFiltering={preFiltering}
         ></OutPutSidebar>
       )}
     </div>

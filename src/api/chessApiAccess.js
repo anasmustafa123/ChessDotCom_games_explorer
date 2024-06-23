@@ -88,7 +88,6 @@ const minimizeData = (username, monthGames) => {
 };
 
 /**
- * A button that increments a counter when clicked.
  * @param {String} username
  * @param {Number} smonth
  * @param {Number} syear
