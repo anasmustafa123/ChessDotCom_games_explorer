@@ -1,11 +1,12 @@
 import "./styles/app.css";
 import { useEffect, useState, useRef } from "react";
 import ChessBoard from "./components/ChessBoard";
-import { reduceOnMove } from "./components/modifyExplore";
+import { reduceOnMove, totalPgn } from "./components/modifyExplore";
 import "./styles/react_circular_progressbar.css";
 import RightSidebar from "./components/RightSidebar";
 import img from "./assets/chessdotcomlogo.png";
 import { ToastContainer } from "react-toastify";
+import { getItem, setItem, deleteItem } from "./indexDb/indexDb";
 export default function App() {
   const [username, setUserName] = useState("");
   const [totalGames, setTotalGames] = useState([]);
@@ -22,40 +23,64 @@ export default function App() {
   const [filterby, setfilterby] = useState({ gametype: "all" });
   const [inputStartDate, setInputStartDate] = useState("");
   const [inputEndDate, setInputEndDate] = useState("");
-  const effectRunCount = useRef(0);
 
-  const addToLocalStorage = (
+  const loadDataToIndexDb = async (
+    loaded,
     totalGames,
     totalGamesSim,
     inputStartDate,
     inputEndDate
   ) => {
-    localStorage.setItem("username", JSON.stringify(username));
-    localStorage.setItem("totalGames", JSON.stringify(totalGames));
-    localStorage.setItem("totalGamesSim", JSON.stringify(totalGamesSim));
-    localStorage.setItem("loaded", JSON.stringify(true));
-    localStorage.setItem("inputStartDate", JSON.stringify(inputStartDate));
-    localStorage.setItem("inputEndDate", JSON.stringify(inputEndDate));
+    await setItem("username", JSON.stringify(username));
+    await setItem("totalGames", JSON.stringify(totalGames));
+    await setItem("totalGamesSim", JSON.stringify(totalGamesSim));
+    await setItem("loaded", JSON.stringify(loaded));
+    await setItem("inputStartDate", JSON.stringify(inputStartDate));
+    await setItem("inputEndDate", JSON.stringify(inputEndDate));
   };
+
   useEffect(() => {
-    console.log("refresh");
-    let username = JSON.parse(localStorage.getItem("username"));
-    let totalGames = JSON.parse(localStorage.getItem("totalGames"));
-    let totalGamesSim = JSON.parse(localStorage.getItem("totalGamesSim"));
-    if (username) setUserName(username);
-    if (totalGamesSim) setTotalGamesSim(totalGamesSim);
-    if (totalGames) {
-      setTotalGames(JSON.parse(localStorage.getItem("totalGames")));
-      setloaded(JSON.parse(localStorage.getItem("loaded")));
-      setInputStartDate(JSON.parse(localStorage.getItem("inputStartDate")));
-      setInputEndDate(JSON.parse(localStorage.getItem("inputEndDate")));
-      let x = reduceOnMove([...totalGamesSim], "", 0, (games) => {
-        return games;
-      });
-      console.log(4)
-      setPreFiltering([...totalGamesSim]);
-      setExplorerArray(x.explorerArray);
-    }
+    getItem("username").then((data) => {
+      if (data) {
+        setUserName(JSON.parse(data));
+      }
+    });
+
+    getItem("totalGames").then((data) => {
+      if (data) {
+        setTotalGames(JSON.parse(data));
+      }
+    });
+
+    getItem("totalGamesSim").then((data) => {
+      if (data) {
+        let newtotalgamesim = JSON.parse(data);
+        setTotalGamesSim(newtotalgamesim);
+        let x = reduceOnMove([...newtotalgamesim], "", 0, (games) => {
+          return games;
+        });
+        setPreFiltering([...newtotalgamesim]);
+        setExplorerArray(x.explorerArray);
+      }
+    });
+
+    getItem("loaded").then((data) => {
+      if (data) {
+        setloaded(JSON.parse(data));
+      }
+    });
+
+    getItem("inputStartDate").then((data) => {
+      if (data) {
+        setInputStartDate(JSON.parse(data));
+      }
+    });
+
+    getItem("inputEndDate").then((data) => {
+      if (data) {
+        setInputEndDate(JSON.parse(data));
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -66,7 +91,7 @@ export default function App() {
         setPreFiltering((oldpre) =>
           reduceSingle(oldpre, currentMove, currentMoveNum)
         );
-        console.log(3)
+        console.log(3);
         x = reduceOnMove(
           postFiltering,
           currentMove,
@@ -75,7 +100,7 @@ export default function App() {
         );
         setpostFiltering(x.gamesAafterMove);
       } else {
-        console.log(2)
+        console.log(2);
         x = reduceOnMove(
           preFiltering,
           currentMove,
@@ -89,7 +114,7 @@ export default function App() {
     }
   }, [updateToggle]);
 
- /*  useEffect(() => {
+  /*  useEffect(() => {
     console.log({ effectRunCount: effectRunCount.current });
     if (effectRunCount.current < 2) {
       effectRunCount.current += 1;
@@ -116,7 +141,7 @@ export default function App() {
     setExplorerArray(x.explorerArray);
   }, [postFilteringFlag, postrerender]);
  */
- 
+
   const resetExplorerArray = () => {
     let x = [];
     setPreFiltering(totalGamesSim);
@@ -126,10 +151,10 @@ export default function App() {
       x = reduceOnMove(newpostfiltering, "", 0, (games) => {
         return games;
       });
-    }else{
+    } else {
       x = reduceOnMove(totalGamesSim, "", 0, (games) => {
-      return games;
-    });
+        return games;
+      });
     }
     setCurrentMoveNum(1);
     setCurrentMove("");
@@ -224,6 +249,7 @@ export default function App() {
       <div className="mainContainer">
         <div className="leftsidebar">
           <img draggable={false} className="logo" src={img} alt="" />
+          <div className="mainTitle">CHESS INSIGHT</div>
         </div>
         <ChessBoard
           setCurrentMove={setCurrentMove}
@@ -244,15 +270,15 @@ export default function App() {
           setTotalGames={setTotalGames}
           filter={filter}
           setfilterby={setfilterby}
-          addToLocalStorage={addToLocalStorage}
-          inputStartDate={inputStartDate}  
+          loadDataToIndexDb={loadDataToIndexDb}
+          inputStartDate={inputStartDate}
           inputEndDate={inputEndDate}
           setInputStartDate={setInputStartDate}
           setInputEndDate={setInputEndDate}
           setpostFilteringFlag={setpostFilteringFlag}
           setpostFiltering={setpostFiltering}
           currentMove={currentMove}
-          currentMoveNum={currentMoveNum} 
+          currentMoveNum={currentMoveNum}
           preFiltering={preFiltering}
           movesSeq={movesSeq}
         ></RightSidebar>
