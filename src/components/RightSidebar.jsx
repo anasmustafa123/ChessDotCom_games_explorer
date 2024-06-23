@@ -19,7 +19,7 @@ export default function RightSidebar({
   setloaded,
   filter,
   setfilterby,
-  addToLocalStorage,
+  loadDataToIndexDb,
   inputEndDate,
   setInputEndDate,
   inputStartDate,
@@ -29,7 +29,7 @@ export default function RightSidebar({
   currentMove,
   currentMoveNum,
   preFiltering,
-  movesSeq
+  movesSeq,
 }) {
   const [gamePeriod, setGamePeriod] = useState("all");
   const [loading, setLoading] = useState(false);
@@ -106,7 +106,7 @@ export default function RightSidebar({
 
   return (
     <div className={styles.rightSidebarContainer} style={{ ...inlineStyles }}>
-      <h1>Personal Explorer</h1>
+      <h1>CHESS INSIGHT</h1>
       {!loaded ? (
         <>
           <Input_SideBar
@@ -138,7 +138,7 @@ export default function RightSidebar({
                     incrementRequestCount,
                     incrementNumOfGamesLoaded
                   )
-                    .then((allGames) => {
+                    .then(async (allGames) => {
                       if (allGames) {
                         setTotalGames(allGames);
                         setLoading(false);
@@ -154,7 +154,8 @@ export default function RightSidebar({
                             return games;
                           }
                         ).explorerArray;
-                        addToLocalStorage(
+                        await loadDataToIndexDb(
+                          true,
                           allGames,
                           prefilteringdata,
                           { month: finalDate.smonth, year: finalDate.syear },

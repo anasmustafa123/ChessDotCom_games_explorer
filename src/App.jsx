@@ -114,34 +114,6 @@ export default function App() {
     }
   }, [updateToggle]);
 
-  /*  useEffect(() => {
-    console.log({ effectRunCount: effectRunCount.current });
-    if (effectRunCount.current < 2) {
-      effectRunCount.current += 1;
-      console.log("skip");
-      return; // Skip the effect on initial render
-    }
-    let x = [];
-    console.log("third");
-    console.log({ postFilteringFlag });
-    console.log({ preFiltering });
-    if (postFilteringFlag) {
-      console.log({ postFiltering });
-      console.log({ currentMoveNum });
-      x = reduceOnMove(postFiltering, "", currentMoveNum - 1, (games) => {
-        return games;
-      });
-      setpostFiltering(x.gamesAafterMove);
-    } else {
-      x = reduceOnMove(preFiltering, "", currentMoveNum - 1, (games) => {
-        return games;
-      });
-    }
-
-    setExplorerArray(x.explorerArray);
-  }, [postFilteringFlag, postrerender]);
- */
-
   const resetExplorerArray = () => {
     let x = [];
     setPreFiltering(totalGamesSim);

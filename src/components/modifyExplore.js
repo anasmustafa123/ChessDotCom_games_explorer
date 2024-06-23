@@ -36,13 +36,13 @@ const getRatio = (currentGames, move, moveNum) => {
   };
 };
 /**
- * 
- * @param {Array} games 
- * @param {String} move 
- * @param {Number} moveNum 
+ *
+ * @param {Array} games
+ * @param {String} move
+ * @param {Number} moveNum
  * @param {Function} callback callback used to filter the games and is called first
  * @returns { explorerArray, gamesAafterMove }
- * {gamesAfterMove} are the games array after filtering using the callback function 
+ * {gamesAfterMove} are the games array after filtering using the callback function
  * {explorerArray} are the top used lines
  */
 const reduceOnMove = (games, move, moveNum, callback) => {
@@ -66,7 +66,8 @@ const reduceOnMove = (games, move, moveNum, callback) => {
     if (
       index == 0 ||
       (value.moves.length <= moveNum &&
-        tempArr[index - 1].moves.length <= moveNum)
+        tempArr[index - 1].moves.length <= moveNum) ||
+      value.moves[0] == ""
     ) {
       return;
     }
@@ -100,7 +101,7 @@ const reduceOnMove = (games, move, moveNum, callback) => {
       }
     }
   });
-  if (tempArr[tempArr.length - 1].moves[moveNum] !== undefined) {
+  if (tempArr[tempArr.length - 1].moves[moveNum] !== undefined && tempArr[tempArr.length - 1].moves[0] !== "") {
     explorerArray.push({
       moveNum: moveNum + 1,
       move: tempArr[tempArr.length - 1].moves[moveNum],

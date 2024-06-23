@@ -16,9 +16,10 @@ export default function Chess_Line({
         margin: "0px 1rem 0px 1rem",
         fontSize: "1.1rem",
         justifyContent: "space-between",
+        alignItems: "center"
       }}
     >
-      <div style={{minWidth: "3rem"}}>{`${moveNum}.${move}`}</div>
+      <div style={{minWidth: "3rem", fontWeight: "800"}}>{`${moveNum}.${move}`}</div>
       <div style={{minWidth: "3rem"}}>{playedCount}</div>
       <Chess_ProgressBar
         drawPerc={drawPerc}

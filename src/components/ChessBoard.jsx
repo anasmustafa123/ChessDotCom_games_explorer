@@ -1,7 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import "../styles/chessboard.css";
+import { clearDB } from "../indexDb/indexDb";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 export default function ChessBoard({
   setCurrentMove,
   setUpdateToggle,
@@ -221,6 +224,39 @@ export default function ChessBoard({
     borderRadius: "5px",
     color: "white",
   };
+
+  const pieces = [
+    "wP",
+    "wN",
+    "wB",
+    "wR",
+    "wQ",
+    "wK",
+    "bP",
+    "bN",
+    "bB",
+    "bR",
+    "bQ",
+    "bK",
+  ];
+
+  const customPieces = useMemo(() => {
+    const pieceComponents = {};
+    pieces.forEach((piece) => {
+      pieceComponents[piece] = ({ squareWidth }) => (
+        <div
+          style={{
+            width: squareWidth,
+            height: squareWidth,
+            backgroundImage: `url(/${piece}.png)`,
+            backgroundSize: "100%",
+          }}
+        />
+      );
+    });
+    return pieceComponents;
+  }, []);
+
   return (
     <div className="boardWrapper">
       <Chessboard
@@ -265,7 +301,7 @@ export default function ChessBoard({
           style={buttonStyle}
           onClick={() => {
             safeGameMutate((game) => {
-              console.log("undo")
+              console.log("undo");
               game.undo();
               undoExploreArray();
             });
@@ -275,6 +311,26 @@ export default function ChessBoard({
           }}
         >
           undo
+        </button>
+        <button
+          style={{
+            ...buttonStyle,
+            background: "red",
+            fontSize: "1.5rem",
+            fontWeight: "800",
+          }}
+          className="exit"
+          onClick={() => {
+            clearDB()
+              .then(() => {
+                window.location.reload();
+              })
+              .catch(() => {
+                toast.error("error clearing");
+              });
+          }}
+        >
+          Clear
         </button>
       </div>
     </div>

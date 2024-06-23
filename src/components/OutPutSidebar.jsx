@@ -17,7 +17,7 @@ export default function OutPutSidebar({
   preFiltering,
   movesSeq,
 }) {
-  const [options, setOptions] = useState(["All", "Rapid", "Blitz", "Bullet"]);
+  const [options, setOptions] = useState(["All Games", "Rapid", "Blitz", "Bullet"]);
 
   function getMonthName(monthNumber) {
     const monthNames = [
@@ -73,6 +73,7 @@ export default function OutPutSidebar({
 
           <select
             onChange={(e) => {
+              setpostFilteringFlag(false)
               let x = [];
               if (e.target.selectedIndex == 0) {
                 x = reduceOnMove(
@@ -85,7 +86,7 @@ export default function OutPutSidebar({
                 );
               } else {
                 let newpostfiltering = filter(options[e.target.selectedIndex]);
-                setpostFilteringFlag((old) => !old);
+                setpostFilteringFlag(true);
                 setpostFiltering(newpostfiltering);
                 x = reduceOnMove(
                   newpostfiltering,
