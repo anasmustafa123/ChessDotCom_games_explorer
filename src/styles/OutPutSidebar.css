@@ -43,3 +43,10 @@ select#filter {
   width: fit-content;
   align-self: center;
 }
+.movesDone{
+  font-family: "Roboto", "Roboto", sans-serif;
+  padding: 1rem 0 1rem 1rem ;
+  font-weight: 800;
+  color: #0000008f;
+  font-size: 1.25rem;
+}

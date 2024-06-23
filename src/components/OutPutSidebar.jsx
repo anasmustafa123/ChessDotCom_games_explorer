@@ -14,7 +14,8 @@ export default function OutPutSidebar({
   currentMove,
   currentMoveNum,
   setExplorerArray,
-  preFiltering
+  preFiltering,
+  movesSeq,
 }) {
   const [options, setOptions] = useState(["All", "Rapid", "Blitz", "Bullet"]);
 
@@ -35,6 +36,20 @@ export default function OutPutSidebar({
     ];
     return monthNames[monthNumber - 1];
   }
+
+  const displayMovesSeq = (movesSeq) => {
+    let res = "";
+    movesSeq.forEach((move, i) => {
+      if (i % 2 == 0) {
+        res += `${i/2 + 1}.${move}`;
+      } else {
+        res += `.${move} `;
+      }
+    });
+    console.log({ res });
+    return res;
+  };
+
   return (
     <>
       <div className="osMainContainer" style={{ minWidth: "100%" }}>
@@ -81,7 +96,6 @@ export default function OutPutSidebar({
                   }
                 );
               }
-              console.log(1);
               setExplorerArray(x.explorerArray);
               setfilterby({
                 gametype: options[e.target.selectedIndex].toLowerCase(),
@@ -97,6 +111,7 @@ export default function OutPutSidebar({
             ))}
           </select>
         </div>
+        <div className="movesDone">{displayMovesSeq(movesSeq)}</div>
         <div className="lines">
           {explorerArray.map((line, index) => (
             <Chess_Line

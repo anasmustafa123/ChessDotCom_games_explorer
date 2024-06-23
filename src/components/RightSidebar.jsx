@@ -28,7 +28,8 @@ export default function RightSidebar({
   setpostFiltering,
   currentMove,
   currentMoveNum,
-  preFiltering
+  preFiltering,
+  movesSeq
 }) {
   const [gamePeriod, setGamePeriod] = useState("all");
   const [loading, setLoading] = useState(false);
@@ -188,6 +189,7 @@ export default function RightSidebar({
           currentMoveNum={currentMoveNum}
           setExplorerArray={setExplorerArray}
           preFiltering={preFiltering}
+          movesSeq={movesSeq}
         ></OutPutSidebar>
       )}
     </div>

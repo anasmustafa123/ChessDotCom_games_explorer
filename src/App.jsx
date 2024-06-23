@@ -13,7 +13,6 @@ export default function App() {
   const [preFiltering, setPreFiltering] = useState([]);
   const [postFiltering, setpostFiltering] = useState([]);
   const [postFilteringFlag, setpostFilteringFlag] = useState(false);
-  const [postrerender, setPostRerender] = useState(false);
   const [explorerArray, setExplorerArray] = useState([]);
   const [currentMove, setCurrentMove] = useState("");
   const [movesSeq, setMoveSeq] = useState([]);
@@ -255,6 +254,7 @@ export default function App() {
           currentMove={currentMove}
           currentMoveNum={currentMoveNum} 
           preFiltering={preFiltering}
+          movesSeq={movesSeq}
         ></RightSidebar>
       </div>
       <ToastContainer
