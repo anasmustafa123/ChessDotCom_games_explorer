@@ -6,6 +6,9 @@
   padding-bottom: 1rem;
   max-height: 75vh;
   overflow: scroll;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+  font-family: "Roboto", sans-serif;
 }
 .osMainContainer {
   font-size: 1.4rem;
@@ -43,9 +46,9 @@ select#filter {
   width: fit-content;
   align-self: center;
 }
-.movesDone{
+.movesDone {
   font-family: "Roboto", "Roboto", sans-serif;
-  padding: 1rem 0 1rem 1rem ;
+  padding: 1rem 0 1rem 1rem;
   font-weight: 800;
   color: #0000008f;
   font-size: 1.25rem;

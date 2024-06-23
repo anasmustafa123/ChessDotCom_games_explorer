@@ -1,24 +1,29 @@
 .suggestedMovesSuggestedMovesList {
   border-radius: 0.2rem;
   display: flex;
-  margin-left: 2rem;
   overflow: hidden;
   width: 100%;
+  font-weight: 800;
+  
 }
 .suggestedMovesSuggestedMovesList .suggestedMovesSuggestedWhite {
   background-color:  #e7e6e5;
   border-radius: 0.2rem 0 0 0.2rem;
   color: #4b4847;
   text-align: left;
+  padding: 0.4rem;
 }
 .suggestedMovesSuggestedMovesList .suggestedMovesSuggestedDraw {
   background-color: #bebdb9;
   color: #4b4847;
   text-align: center;
+  padding: 0.4rem;
+  
 }
 .suggestedMovesSuggestedMovesList .suggestedMovesSuggestedBlack {
   background-color: #4b4847;
   border-radius: 0 0.2rem 0.2rem 0;
   color: #e7e6e5;
   text-align: right;
+  padding: 0.4rem;
 }

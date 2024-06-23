@@ -1,9 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
 h1 {
   color: black;
   text-align: center;
   font-weight: 600;
-  margin-bottom: 2rem !important;
+  margin: 1rem 0 1rem 0 !important;
 }
 body{
   font-family: "Merriweather", serif;
@@ -53,6 +54,13 @@ input[type="month"] {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: "Bangers", system-ui;
+  font-weight: 400;
+  flex-direction: column;
+  color: rgb(230, 230, 230);
+}
+.mainTitle{
+  font-size: 4rem;
 }
 
 @media screen and (max-width: 1650px) {
