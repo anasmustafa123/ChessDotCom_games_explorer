@@ -4,14 +4,15 @@
   gap: 1rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
-  max-height: 75vh;
   overflow: scroll;
   scrollbar-width: thin;
   scroll-behavior: smooth;
   font-family: "Roboto", sans-serif;
+  height: 59%;
 }
 .osMainContainer {
   font-size: 1.4rem;
+  height: 100%;
 }
 .osMinicontainer {
   display: flex;

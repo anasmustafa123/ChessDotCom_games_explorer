@@ -13,3 +13,15 @@ h1{
 *, :after, :before {
   box-sizing: inherit;
 }
+
+a{
+  list-style: none;
+  text-decoration: none;
+}
+body{
+  background-color: rgb(44, 44, 44);
+  scrollbar-width: thin;
+}
+#root{
+  scrollbar-width: thin;
+}

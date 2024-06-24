@@ -7,6 +7,7 @@ import RightSidebar from "./components/RightSidebar";
 import img from "./assets/chessdotcomlogo.png";
 import { ToastContainer } from "react-toastify";
 import { getItem, setItem, deleteItem } from "./indexDb/indexDb";
+import Navbar from "./components/Navbar";
 export default function App() {
   const [username, setUserName] = useState("");
   const [totalGames, setTotalGames] = useState([]);
@@ -218,6 +219,7 @@ export default function App() {
 
   return (
     <>
+      <Navbar></Navbar>
       <div className="mainContainer">
         <div className="leftsidebar">
           <img draggable={false} className="logo" src={img} alt="" />

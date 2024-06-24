@@ -27,11 +27,14 @@
   border-radius: 1rem;
   min-width: 400px;
   grid-column: 8 / 10;
+  height: 78vh;
 }
 
 @media screen and (max-width: 1300px) {
   .rightSidebarContainer {
+    margin-top: 6rem;
     grid-column: 1 !important;
+    height: fit-content;
   }
 }
 @media screen and (max-width: 600px) {
