@@ -17,7 +17,7 @@
   }
 }
 
-@media screen and (max-width: 1160px) {
+@media screen and (max-width: 1300px) {
   .boardWrapper {
     grid-column: 1 !important;
   }

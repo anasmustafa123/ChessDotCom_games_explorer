@@ -29,7 +29,7 @@
   grid-column: 8 / 10;
 }
 
-@media screen and (max-width: 1160px) {
+@media screen and (max-width: 1300px) {
   .rightSidebarContainer {
     grid-column: 1 !important;
   }

@@ -27,7 +27,7 @@ export default function ChessBoard({
       } else if (window.innerWidth > 1300) {
         setChessboardWidth(800);
       } else if (window.innerWidth > 760) {
-        setChessboardWidth(700);
+        setChessboardWidth(window.innerWidth - 200);
       } else if (window.innerWidth > 600) {
         setChessboardWidth(500);
       } else if (window.innerWidth > 430) {
