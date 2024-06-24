@@ -54,3 +54,19 @@ select#filter {
   color: #0000008f;
   font-size: 1.25rem;
 }
+@media screen and (max-height: 1400px) {
+  .lines {
+    height: 59%;
+  }
+}
+
+@media screen and (max-height: 1250px) {
+  .lines {
+    height: 51%;
+  }
+}
+@media screen and (max-height: 1050px) {
+  .lines {
+    height: 44%;
+  }
+}

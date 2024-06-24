@@ -35,6 +35,7 @@ input[type="month"] {
   grid-template-columns: repeat(9, 1fr);
   padding: 1rem;
   align-items: center;
+  height: 92vh;
 }
 
 .logo {

@@ -5,10 +5,6 @@ body {
 h1{
   margin: 0;
 }
-/* .scrollbar-obtrusive * {
-  scrollbar-color: rgba(0, 0, 0, .45) transparent;
-  scrollbar-width: thin;
-} */
 
 *, :after, :before {
   box-sizing: inherit;
@@ -22,6 +18,7 @@ body{
   background-color: rgb(44, 44, 44);
   scrollbar-width: thin;
 }
+
 #root{
   scrollbar-width: thin;
 }

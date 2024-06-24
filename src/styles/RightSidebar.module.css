@@ -27,7 +27,7 @@
   border-radius: 1rem;
   min-width: 400px;
   grid-column: 8 / 10;
-  height: 78vh;
+  height: 80vh;
 }
 
 @media screen and (max-width: 1300px) {
@@ -38,7 +38,23 @@
   }
 }
 @media screen and (max-width: 600px) {
-    .rightSidebarContainer {
-        min-width: 300px;
-    }
+  .rightSidebarContainer {
+    min-width: 300px;
   }
+}
+@media screen and (max-height: 1400px) {
+  .rightSidebarContainer {
+    height: 76vh;
+  }
+}
+
+@media screen and (max-height: 1250px) {
+  .rightSidebarContainer {
+    height: 73vh;
+  }
+}
+@media screen and (max-height: 1050px) {
+  .rightSidebarContainer {
+    height: 71vh;
+  }
+}
