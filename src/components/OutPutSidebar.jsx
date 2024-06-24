@@ -16,9 +16,15 @@ export default function OutPutSidebar({
   setExplorerArray,
   preFiltering,
   movesSeq,
+  setSelectedColor,
+  selectedColor,
 }) {
-  const [options, setOptions] = useState(["All Games", "Rapid", "Blitz", "Bullet"]);
-
+  const [options, setOptions] = useState([
+    "All Games",
+    "Rapid",
+    "Blitz",
+    "Bullet",
+  ]);
   function getMonthName(monthNumber) {
     const monthNames = [
       "January",
@@ -41,12 +47,11 @@ export default function OutPutSidebar({
     let res = "";
     movesSeq.forEach((move, i) => {
       if (i % 2 == 0) {
-        res += `${i/2 + 1}.${move}`;
+        res += `${i / 2 + 1}.${move}`;
       } else {
         res += `.${move} `;
       }
     });
-    console.log({ res });
     return res;
   };
 
@@ -70,47 +75,64 @@ export default function OutPutSidebar({
               To: {`${getMonthName(inputEndDate.month)},${inputEndDate.year}`}
             </div>
           </div>
-
-          <select
-            onChange={(e) => {
-              setpostFilteringFlag(false)
-              let x = [];
-              if (e.target.selectedIndex == 0) {
-                x = reduceOnMove(
-                  preFiltering,
-                  currentMove,
-                  currentMoveNum - 1,
-                  (games) => {
-                    return games;
-                  }
-                );
-              } else {
-                let newpostfiltering = filter(options[e.target.selectedIndex]);
-                setpostFilteringFlag(true);
-                setpostFiltering(newpostfiltering);
-                x = reduceOnMove(
-                  newpostfiltering,
-                  currentMove,
-                  currentMoveNum - 1,
-                  (games) => {
-                    return games;
-                  }
-                );
-              }
-              setExplorerArray(x.explorerArray);
-              setfilterby({
-                gametype: options[e.target.selectedIndex].toLowerCase(),
-              });
-            }}
-            name="filter"
-            id="filter"
-          >
-            {options.map((value, i) => (
-              <option key={i} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
+          <div>
+            <select
+            id="playerColor"
+              className="filter"
+              onChange={(e) => {
+                setSelectedColor(e.target.value.toLowerCase());
+              }}
+              value={selectedColor}
+            >
+              {["White", "Black"].map((color, index) => (
+                <option value={color.toLowerCase()} key={index}>
+                  {color}
+                </option>
+              ))}
+            </select>
+            <select
+              className="filter"
+              onChange={(e) => {
+                setpostFilteringFlag(false);
+                let x = [];
+                if (e.target.selectedIndex == 0) {
+                  x = reduceOnMove(
+                    preFiltering,
+                    currentMove,
+                    currentMoveNum - 1,
+                    (games) => {
+                      return games;
+                    }
+                  );
+                } else {
+                  let newpostfiltering = filter(
+                    options[e.target.selectedIndex]
+                  );
+                  setpostFilteringFlag(true);
+                  setpostFiltering(newpostfiltering);
+                  x = reduceOnMove(
+                    newpostfiltering,
+                    currentMove,
+                    currentMoveNum - 1,
+                    (games) => {
+                      return games;
+                    }
+                  );
+                }
+                setExplorerArray(x.explorerArray);
+                setfilterby({
+                  gametype: options[e.target.selectedIndex].toLowerCase(),
+                });
+              }}
+              name="filter"
+            >
+              {options.map((value, i) => (
+                <option key={i} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
         <div className="movesDone">{displayMovesSeq(movesSeq)}</div>
         <div className="lines">

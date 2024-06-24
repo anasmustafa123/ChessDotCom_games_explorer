@@ -24,7 +24,7 @@ export default function App() {
   const [filterby, setfilterby] = useState({ gametype: "all" });
   const [inputStartDate, setInputStartDate] = useState("");
   const [inputEndDate, setInputEndDate] = useState("");
-
+  const [selectedColor, setSelectedColor] = useState("white");
   const loadDataToIndexDb = async (
     loaded,
     totalGames,
@@ -48,21 +48,27 @@ export default function App() {
     });
 
     getItem("totalGames").then((data) => {
+      let newtotalGames;
       if (data) {
-        setTotalGames(JSON.parse(data));
+        newtotalGames = JSON.parse(data);
+        setTotalGames(newtotalGames);
       }
-    });
-
-    getItem("totalGamesSim").then((data) => {
-      if (data) {
-        let newtotalgamesim = JSON.parse(data);
-        setTotalGamesSim(newtotalgamesim);
-        let x = reduceOnMove([...newtotalgamesim], "", 0, (games) => {
-          return games;
-        });
-        setPreFiltering([...newtotalgamesim]);
-        setExplorerArray(x.explorerArray);
-      }
+      getItem("totalGamesSim").then((data) => {
+        if (data) {
+          let newtotalgamesim = JSON.parse(data);
+          setTotalGamesSim(newtotalgamesim);
+          let newPreFilteringdata = reduceOnColorChange(
+            [...newtotalgamesim],
+            "white",
+            newtotalGames
+          );
+          let x = reduceOnMove(newPreFilteringdata, "", 0, (games) => {
+            return games;
+          });
+          setPreFiltering([...newPreFilteringdata]);
+          setExplorerArray(x.explorerArray);
+        }
+      });
     });
 
     getItem("loaded").then((data) => {
@@ -85,14 +91,51 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (totalGamesSim.length != 0) {
+      let x = [];
+      let newprefilteringdata = reduceMultiple(
+        reduceOnColorChange(
+          totalGamesSim,
+          selectedColor.toLowerCase(),
+          totalGames
+        ),
+        currentMove,
+        currentMoveNum - 1
+      );
+      setPreFiltering(newprefilteringdata);
+      if (postFilteringFlag) {
+        let newpostfilteringdata = filter(
+          filterby.gametype,
+          newprefilteringdata
+        );
+        x = reduceOnMove(
+          newpostfilteringdata,
+          currentMove,
+          currentMoveNum - 1,
+          (games) => {
+            return games;
+          }
+        );
+        setpostFiltering(newpostfilteringdata);
+      } else {
+        x = reduceOnMove(
+          newprefilteringdata,
+          currentMove,
+          currentMoveNum - 1,
+          reduceMultiple
+        );
+      }
+      setExplorerArray(x.explorerArray);
+    }
+  }, [selectedColor]);
+
+  useEffect(() => {
     if (loaded && currentMove !== "") {
-      console.log("second");
       let x = [];
       if (postFilteringFlag) {
         setPreFiltering((oldpre) =>
           reduceSingle(oldpre, currentMove, currentMoveNum)
         );
-        console.log(3);
         x = reduceOnMove(
           postFiltering,
           currentMove,
@@ -101,7 +144,6 @@ export default function App() {
         );
         setpostFiltering(x.gamesAafterMove);
       } else {
-        console.log(2);
         x = reduceOnMove(
           preFiltering,
           currentMove,
@@ -115,17 +157,28 @@ export default function App() {
     }
   }, [updateToggle]);
 
+  const reduceOnColorChange = (games, newcolor, totalGames) => {
+    return games.filter((game, index) => {
+      return totalGames[game.index].color.toLowerCase() == newcolor;
+    });
+  };
+
   const resetExplorerArray = () => {
     let x = [];
-    setPreFiltering(totalGamesSim);
+    let newprefilteringdata = reduceOnColorChange(
+      totalGamesSim,
+      selectedColor,
+      totalGames
+    );
+    setPreFiltering(newprefilteringdata);
     if (postFilteringFlag) {
-      let newpostfiltering = filter(filterby.gametype, totalGamesSim);
+      let newpostfiltering = filter(filterby.gametype, newprefilteringdata);
       setpostFiltering(newpostfiltering);
       x = reduceOnMove(newpostfiltering, "", 0, (games) => {
         return games;
       });
     } else {
-      x = reduceOnMove(totalGamesSim, "", 0, (games) => {
+      x = reduceOnMove(newprefilteringdata, "", 0, (games) => {
         return games;
       });
     }
@@ -149,8 +202,6 @@ export default function App() {
           filtertype.toLowerCase()
         );
       });
-      //setPostRerender((old) => !old);
-      //setpostFilteringFlag(true);
       return newpostfiltering;
     }
     return postFiltering;
@@ -163,7 +214,7 @@ export default function App() {
     setCurrentMoveNum((old) => old - 1);
     let x = [];
     let newprefilteringdata = reduceUndo(
-      [...totalGamesSim],
+      reduceOnColorChange([...totalGamesSim], selectedColor, totalGames),
       "",
       currentMoveNum - 2,
       reduceUndo
@@ -173,7 +224,6 @@ export default function App() {
     if (postFilteringFlag) {
       // just filter the prefiltring
       // and set the result to postfiltering
-      console.log({ preFiltering });
       let newpostfilteringdata = filter(filterby.gametype, newprefilteringdata);
       setpostFiltering(newpostfilteringdata);
       x = reduceOnMove(
@@ -191,6 +241,17 @@ export default function App() {
       });
     }
     setExplorerArray(x.explorerArray);
+  };
+
+  const reduceMultiple = (games, move, moveNum) => {
+    return games.filter((game) => {
+      for (let i = 0; i < movesSeq.length; i++) {
+        if (game.moves[i] != movesSeq[i]) {
+          return false;
+        }
+      }
+      return true;
+    });
   };
 
   const reduceSingle = (games, move, moveNum) => {
@@ -255,6 +316,8 @@ export default function App() {
           currentMoveNum={currentMoveNum}
           preFiltering={preFiltering}
           movesSeq={movesSeq}
+          selectedColor={selectedColor}
+          setSelectedColor={setSelectedColor}
         ></RightSidebar>
       </div>
       <ToastContainer

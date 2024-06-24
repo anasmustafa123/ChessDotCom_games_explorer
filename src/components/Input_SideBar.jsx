@@ -14,7 +14,7 @@ export default function Input_SideBar({
   numOfGamesLoaded,
 }) {
   const handleChange = (e, callback) => {
-    callback(e.target.value);
+    callback(e.target.value.replace(/\s+/g, ''));
   };
   const handleDateChange = (e, callback) => {
     let strdate = e.target.value;

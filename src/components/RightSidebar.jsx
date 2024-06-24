@@ -30,6 +30,8 @@ export default function RightSidebar({
   currentMoveNum,
   preFiltering,
   movesSeq,
+  selectedColor,
+  setSelectedColor,
 }) {
   const [gamePeriod, setGamePeriod] = useState("all");
   const [loading, setLoading] = useState(false);
@@ -143,8 +145,16 @@ export default function RightSidebar({
                         setTotalGames(allGames);
                         setLoading(false);
                         setloaded(true);
-                        let prefilteringdata = totalPgn(allGames);
-                        setTotalGamesSim(prefilteringdata);
+                        let newTotalGameSim = totalPgn(allGames);
+                        let prefilteringdata = newTotalGameSim.filter(
+                          (game) => {
+                            return (
+                              allGames[game.index].color.toLowerCase() ==
+                              selectedColor.toLowerCase()
+                            );
+                          }
+                        );
+                        setTotalGamesSim(newTotalGameSim);
                         setPreFiltering(prefilteringdata);
                         let x = reduceOnMove(
                           prefilteringdata,
@@ -157,7 +167,7 @@ export default function RightSidebar({
                         await loadDataToIndexDb(
                           true,
                           allGames,
-                          prefilteringdata,
+                          newTotalGameSim,
                           { month: finalDate.smonth, year: finalDate.syear },
                           { year: finalDate.eyear, month: finalDate.emonth }
                         );
@@ -191,6 +201,8 @@ export default function RightSidebar({
           setExplorerArray={setExplorerArray}
           preFiltering={preFiltering}
           movesSeq={movesSeq}
+          selectedColor={selectedColor}
+          setSelectedColor={setSelectedColor}
         ></OutPutSidebar>
       )}
     </div>

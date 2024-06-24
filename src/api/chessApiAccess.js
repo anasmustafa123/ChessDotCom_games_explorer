@@ -59,20 +59,20 @@ const minimizeData = (username, monthGames) => {
       opponentRating: 0,
       time_class: "",
     };
-    if (game.black.result === "win") {
+    if (game.black.result.toLowerCase() === "win") {
       sample.result = "black";
     } else if (
-      game.black.result === "agreed" ||
-      game.black.result === "repetition" ||
-      game.black.result === "stalemate" ||
-      game.black.result === "timevsinsufficient" ||
-      game.black.result === "insufficient"
+      game.black.result.toLowerCase() === "agreed" ||
+      game.black.result.toLowerCase() === "repetition" ||
+      game.black.result.toLowerCase() === "stalemate" ||
+      game.black.result.toLowerCase() === "timevsinsufficient" ||
+      game.black.result.toLowerCase() === "insufficient"
     ) {
       sample.result = "draw";
     } else {
       sample.result = "white";
     }
-    if (game.black.username === username) {
+    if (game.black.username.toLowerCase() === username.toLowerCase()) {
       sample.color = "black";
       sample.opponentRating = game.white.rating;
     } else {
