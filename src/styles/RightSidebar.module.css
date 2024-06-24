@@ -34,7 +34,7 @@
   .rightSidebarContainer {
     margin-top: 6rem;
     grid-column: 1 !important;
-    height: fit-content;
+    height: fit-content !important;
   }
 }
 @media screen and (max-width: 600px) {
@@ -48,13 +48,8 @@
   }
 }
 
-@media screen and (max-height: 1250px) {
+@media screen and (max-height: 900px) {
   .rightSidebarContainer {
-    height: 73vh;
-  }
-}
-@media screen and (max-height: 1050px) {
-  .rightSidebarContainer {
-    height: 71vh;
+    height: 100vh;
   }
 }
