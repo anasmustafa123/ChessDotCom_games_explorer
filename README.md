@@ -1,4 +1,4 @@
-# [CHESS INSIGHT](https://chess-dot-com-games-explorer.vercel.app/)
+<a href="https://chess-dot-com-games-explorer.vercel.app/" target="_blank">HESS INSIGHT</a>
 
 ![Startup Screenshot](./public/startup.png)
 ![Loaded Screenshot](./public/loaded.png)
