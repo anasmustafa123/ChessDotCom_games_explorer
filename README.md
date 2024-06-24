@@ -34,6 +34,7 @@ I love chess and i always wanted to improve my opening and i found the chess.com
 - **chess.com public API**: Used for collecting player data.
 - **[react-chessboard](https://github.com/Clariity/react-chessboard)**: React component for rendering the chessboard.
 - **[chess.js](https://github.com/jhlywa/chess.js)**: JavaScript library for chess logic and move validation.
+- [indexDB] used instead for localStorage due to size limitations
 
 ## Support :hugs: :hugs:
 
