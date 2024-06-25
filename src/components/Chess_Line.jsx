@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import Chess_ProgressBar from "./Chess_ProgressBar";
 export default function Chess_Line({
   move,

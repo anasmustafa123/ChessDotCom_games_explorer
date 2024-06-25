@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import styles from "../styles/Chess_ProgressBar.module.css";
 export default function Chess_ProgressBar({ whitePerc, drawPerc, blackPerc }) {
   return (

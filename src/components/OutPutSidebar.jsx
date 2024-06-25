@@ -1,24 +1,25 @@
 import Chess_Line from "./Chess_Line";
 import "../styles/OutPutSidebar.css";
-import { useState } from "react";
-import { reduceOnMove } from "./modifyExplore";
-export default function OutPutSidebar({
-  username,
-  inputStartDate,
-  inputEndDate,
-  explorerArray,
-  filter,
-  setfilterby,
-  setpostFilteringFlag,
-  setpostFiltering,
-  currentMove,
-  currentMoveNum,
-  setExplorerArray,
-  preFiltering,
-  movesSeq,
-  setSelectedColor,
-  selectedColor,
-}) {
+import { reduceOnMove } from "./gamesControl";
+import React, { useContext, useState } from "react";
+import { gameContext } from "../contexts/UserGameContext";
+import { userInfoContext } from "../contexts/UserStaticContext";
+export default function OutPutSidebar() {
+  const {
+    explorerArray,
+    filter,
+    setfilterby,
+    setpostFilteringFlag,
+    setpostFiltering,
+    currentMove,
+    currentMoveNum,
+    setExplorerArray,
+    preFiltering,
+    movesSeq,
+    setSelectedColor,
+    selectedColor,
+  } = useContext(gameContext);
+  const {username, inputStartDate, inputEndDate} = useContext(userInfoContext);
   const [options, setOptions] = useState([
     "All Games",
     "Rapid",
@@ -77,7 +78,7 @@ export default function OutPutSidebar({
           </div>
           <div>
             <select
-            id="playerColor"
+              id="playerColor"
               className="filter"
               onChange={(e) => {
                 setSelectedColor(e.target.value.toLowerCase());
@@ -100,6 +101,7 @@ export default function OutPutSidebar({
                     preFiltering,
                     currentMove,
                     currentMoveNum - 1,
+                    movesSeq,
                     (games) => {
                       return games;
                     }
@@ -114,6 +116,7 @@ export default function OutPutSidebar({
                     newpostfiltering,
                     currentMove,
                     currentMoveNum - 1,
+                    movesSeq,
                     (games) => {
                       return games;
                     }
