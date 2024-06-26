@@ -13,7 +13,6 @@ const UserProvider = ({ children }) => {
   const [numOfGamesLoaded, setNumOfGamesLoaded] = useState(0);
 
   useEffect(() => {
-    console.log("once");
     getItem("username").then((data) => {
       if (data) {
         setUserName(JSON.parse(data));

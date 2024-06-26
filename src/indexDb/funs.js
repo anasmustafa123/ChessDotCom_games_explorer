@@ -8,11 +8,11 @@ const loadDataToIndexDb = async (
   inputStartDate,
   inputEndDate
 ) => {
-  await setItem("username", JSON.stringify(username));
-  await setItem("totalGames", JSON.stringify(totalGames));
-  await setItem("totalGamesSim", JSON.stringify(totalGamesSim));
-  await setItem("loaded", JSON.stringify(loaded));
-  await setItem("inputStartDate", JSON.stringify(inputStartDate));
-  await setItem("inputEndDate", JSON.stringify(inputEndDate));
+  setItem("username", JSON.stringify(username));
+  setItem("totalGames", JSON.stringify(totalGames));
+  setItem("totalGamesSim", JSON.stringify(totalGamesSim));
+  setItem("loaded", JSON.stringify(loaded));
+  setItem("inputStartDate", JSON.stringify(inputStartDate));
+  let x = setItem("inputEndDate", JSON.stringify(inputEndDate));
 };
 export { loadDataToIndexDb };

@@ -26,7 +26,6 @@ const GameContextProvider = ({ children }) => {
   const [loaded, setloaded] = useState(false);
 
   useEffect(() => {
-    console.log("once game")
     getItem("totalGames").then((data) => {
       let newtotalGames;
       if (data) {
@@ -42,6 +41,7 @@ const GameContextProvider = ({ children }) => {
             "white",
             newtotalGames
           );
+
           let x = reduceOnMove(
             newPreFilteringdata,
             "",
@@ -77,7 +77,9 @@ const GameContextProvider = ({ children }) => {
         currentMoveNum - 1,
         movesSeq
       );
+
       setPreFiltering(newprefilteringdata);
+
       if (postFilteringFlag) {
         let newpostfilteringdata = filter(
           filterby.gametype,
@@ -102,6 +104,7 @@ const GameContextProvider = ({ children }) => {
           reduceMultiple
         );
       }
+
       setExplorerArray(x.explorerArray);
     }
   }, [selectedColor]);
@@ -251,7 +254,7 @@ const GameContextProvider = ({ children }) => {
         setloaded,
         undoExploreArray,
         resetExplorerArray,
-        filter
+        filter,
       }}
     >
       {children}

@@ -1,15 +1,11 @@
-import { Chess } from "chess.js";
-const reducePgn = (totalGames) => {
-  const chess = new Chess();
+const reducePgn = (totalGames, allMoves) => {
   let pgnsAnResult = [];
   totalGames.forEach((game, index) => {
-    if (game.pgn) {
-      chess.load_pgn(game.pgn);
-    }
+    if (!allMoves[index][0]) return;
     pgnsAnResult.push({
       index: index,
       result: game.result,
-      moves: chess.history().toString().split(","),
+      moves: allMoves[index][0],
     });
   });
   return pgnsAnResult;
@@ -139,7 +135,6 @@ const reduceOnMove = (games, move, moveNum, movesSeq, callback) => {
   explorerArray.sort((a, b) => {
     return b.n - a.n;
   });
-  console.log({ explorerArray });
   return { explorerArray: explorerArray, gamesAafterMove: fullgames };
 };
 

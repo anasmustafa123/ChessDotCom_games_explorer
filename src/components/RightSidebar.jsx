@@ -1,7 +1,11 @@
 import Input_SideBar from "./Input_SideBar";
 import OutPutSidebar from "./OutPutSidebar";
 import styles from "../styles/RightSidebar.module.css";
-import { getPlayerProfileInfo, getAllPlayerGames } from "../api/chessApiAccess";
+import {
+  getPlayerProfileInfo,
+  getAllPlayerGames,
+  getPgnsOfMonth,
+} from "../api/chessApiAccess";
 import { userInfoContext } from "../contexts/UserStaticContext";
 import { gameContext } from "../contexts/UserGameContext";
 import React, { useContext } from "react";
@@ -86,7 +90,9 @@ export default function RightSidebar() {
    * @callback incrementRequestCount
    */
   const incrementRequestCount = () => {
-    setRequestCount((prevRequestCount) => prevRequestCount + 1);
+    setRequestCount((prevRequestCount) => {
+      return prevRequestCount + 1;
+    });
   };
   /**
    * This callback will be called after loading the chess.com data for each month by `getAllPlayerGames`.
@@ -94,9 +100,9 @@ export default function RightSidebar() {
    * @callback incrementNumOfGamesLoaded
    */
   const incrementNumOfGamesLoaded = (currentMonthGamesNum) => {
-    setNumOfGamesLoaded(
-      (prevNumOfGamesLoaded) => prevNumOfGamesLoaded + currentMonthGamesNum
-    );
+    setNumOfGamesLoaded((prevNumOfGamesLoaded) => {
+      return prevNumOfGamesLoaded + currentMonthGamesNum;
+    });
   };
 
   return (
@@ -122,14 +128,13 @@ export default function RightSidebar() {
                     incrementRequestCount,
                     incrementNumOfGamesLoaded
                   )
-                    .then(async (allGames) => {
+                    .then(async ({ allGames, allMoves }) => {
                       if (allGames) {
                         setLoading(false);
                         setloaded(true);
                         setTotalGames(allGames);
-                        let newTotalGameSim = reducePgn(allGames);
+                        let newTotalGameSim = reducePgn(allGames, allMoves);
                         setTotalGamesSim(newTotalGameSim);
-
                         let prefilteringdata = reduceOnColorChange(
                           newTotalGameSim,
                           selectedColor.toLowerCase(),
@@ -160,7 +165,6 @@ export default function RightSidebar() {
                           );
                         }
                         setExplorerArray(x.explorerArray);
-
                         loadDataToIndexDb(
                           username,
                           true,
