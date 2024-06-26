@@ -1,17 +1,19 @@
-import { useState, useEffect, useMemo } from "react";
+import React,{ useState, useEffect, useContext, useMemo } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import "../styles/chessboard.css";
 import { clearDB } from "../indexDb/indexDb";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-export default function ChessBoard({
-  setCurrentMove,
-  setUpdateToggle,
-  resetExplorerArray,
-  setMoveSeq,
-  undoExploreArray,
-}) {
+import { gameContext } from "../contexts/UserGameContext";
+export default function ChessBoard() {
+  const {
+    setCurrentMove,
+    setUpdateToggle,
+    resetExplorerArray,
+    setMoveSeq,
+    undoExploreArray,
+  } = useContext(gameContext);
   const [game, setGame] = useState(new Chess());
   const [moveFrom, setMoveFrom] = useState("");
   const [moveTo, setMoveTo] = useState(null);
@@ -301,7 +303,6 @@ export default function ChessBoard({
           style={buttonStyle}
           onClick={() => {
             safeGameMutate((game) => {
-              console.log("undo");
               game.undo();
               undoExploreArray();
             });

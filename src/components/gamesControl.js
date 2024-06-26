@@ -1,39 +1,53 @@
-import { Chess } from "chess.js";
-
-const totalPgn = (totalGames) => {
-  const chess = new Chess();
+const reducePgn = (totalGames, allMoves) => {
   let pgnsAnResult = [];
   totalGames.forEach((game, index) => {
-    if (game.pgn) {
-      chess.load_pgn(game.pgn);
-    }
+    if (!allMoves[index][0]) return;
     pgnsAnResult.push({
       index: index,
       result: game.result,
-      moves: chess.history().toString().split(","),
+      moves: allMoves[index][0],
     });
   });
   return pgnsAnResult;
 };
 
-const getRatio = (currentGames, move, moveNum) => {
-  let black = 0,
-    draw = 0;
-  let filtered = currentGames.filter((game) => {
-    return game.moves[moveNum] == move;
-  });
-  filtered.forEach((game) => {
-    if (game.result == "black") {
-      black++;
-    } else if (game.result == "draw") {
-      draw++;
+const reduceMultiple = (games, move, moveNum, movesSeq) => {
+  return games.filter((game) => {
+    for (let i = 0; i < movesSeq.length; i++) {
+      if (game.moves[i] != movesSeq[i]) {
+        return false;
+      }
     }
+    return true;
   });
-  return {
-    white: Number(((filtered.length - black - draw) / filtered.length) * 100),
-    black: Number(black / filtered.length) * 100,
-    draw: Number(draw / filtered.length) * 100,
-  };
+};
+
+const reduceSingle = (games, move, moveNum) => {
+  return games.filter((game) => {
+    if (!game.moves[moveNum - 1]) {
+      return false;
+    }
+    return game.moves[moveNum - 1].toLowerCase() == move.toLowerCase();
+  });
+};
+
+const reduceUndo = (games, move, moveNum, movesSeq) => {
+  let count = 0;
+  return games.filter((game, index) => {
+    count = 0;
+    for (let i = 0; i < moveNum; i++) {
+      if (game.moves[i] == movesSeq[i]) {
+        count++;
+      }
+    }
+    return count == moveNum;
+  });
+};
+
+const reduceOnColorChange = (games, newcolor, totalGames) => {
+  return games.filter((game) => {
+    return totalGames[game.index].color.toLowerCase() == newcolor;
+  });
 };
 /**
  *
@@ -45,8 +59,8 @@ const getRatio = (currentGames, move, moveNum) => {
  * {gamesAfterMove} are the games array after filtering using the callback function
  * {explorerArray} are the top used lines
  */
-const reduceOnMove = (games, move, moveNum, callback) => {
-  let fullgames = callback(games, move, moveNum);
+const reduceOnMove = (games, move, moveNum, movesSeq, callback) => {
+  let fullgames = callback(games, move, moveNum, movesSeq);
   if (games.length == 0) return { explorerArray: [], gamesAafterMove: [] };
   if (fullgames.length == 0) return { explorerArray: [], gamesAafterMove: [] };
   let count = 1;
@@ -101,7 +115,10 @@ const reduceOnMove = (games, move, moveNum, callback) => {
       }
     }
   });
-  if (tempArr[tempArr.length - 1].moves[moveNum] !== undefined && tempArr[tempArr.length - 1].moves[0] !== "") {
+  if (
+    tempArr[tempArr.length - 1].moves[moveNum] !== undefined &&
+    tempArr[tempArr.length - 1].moves[0] !== ""
+  ) {
     explorerArray.push({
       moveNum: moveNum + 1,
       move: tempArr[tempArr.length - 1].moves[moveNum],
@@ -118,8 +135,34 @@ const reduceOnMove = (games, move, moveNum, callback) => {
   explorerArray.sort((a, b) => {
     return b.n - a.n;
   });
-  console.log({ explorerArray });
   return { explorerArray: explorerArray, gamesAafterMove: fullgames };
 };
 
-export { totalPgn, reduceOnMove };
+const getRatio = (currentGames, move, moveNum) => {
+  let black = 0,
+    draw = 0;
+  let filtered = currentGames.filter((game) => {
+    return game.moves[moveNum] == move;
+  });
+  filtered.forEach((game) => {
+    if (game.result == "black") {
+      black++;
+    } else if (game.result == "draw") {
+      draw++;
+    }
+  });
+  return {
+    white: Number(((filtered.length - black - draw) / filtered.length) * 100),
+    black: Number(black / filtered.length) * 100,
+    draw: Number(draw / filtered.length) * 100,
+  };
+};
+
+export {
+  reduceMultiple,
+  reduceSingle,
+  reduceUndo,
+  reduceOnColorChange,
+  reduceOnMove,
+  reducePgn,
+};

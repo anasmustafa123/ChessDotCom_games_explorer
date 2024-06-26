@@ -107,6 +107,7 @@ async function getAllPlayerGames(
   callback2
 ) {
   let allGames = [];
+  let allMoves = [];
   for (let startYear = syear; startYear <= eyear; startYear++) {
     // if current year last month is the current month
     let endMonth = startYear == eyear ? emonth : 12;
@@ -116,8 +117,22 @@ async function getAllPlayerGames(
         startYear,
         startMonth
       );
-      allGames = allGames.concat(
-        minimizeData(username, currentMonthGames["games"])
+      let minCurrentMonthGames = minimizeData(
+        username,
+        currentMonthGames["games"]
+      );
+      allGames = allGames.concat(minCurrentMonthGames);
+      allMoves = allMoves.concat(
+        minCurrentMonthGames.map((value) => {
+          return String(value.pgn)
+            .split(/\n\s*\n/)
+            .filter((value) => {
+              return value[0] == "1";
+            })
+            .map((value) => {
+              return value.split(/\s+/).filter((str) => /^[a-zA-Z]/.test(str));
+            });
+        })
       );
       callback1();
       callback2(currentMonthGames["games"].length);
@@ -125,7 +140,7 @@ async function getAllPlayerGames(
     // only the first year might not start from january
     smonth = 1;
   }
-  return allGames;
+  return { allGames, allMoves };
 }
 
 const getYearAndMonth = (joinDate) => {
@@ -138,4 +153,28 @@ const getYearAndMonth = (joinDate) => {
   return { year: year, month: month };
 };
 
-export { getPlayerProfileInfo, getAllPlayerGames, getYearAndMonth };
+const getPgnsOfMonth = async () => {
+  const username = "anasmostafa11"; // Replace with your Chess.com username
+  const year = "2024"; // Replace with the year
+  const month = "05"; // Replace with the month
+
+  const apiUrl = `https://api.chess.com/pub/player/${username}/games/${year}/${month}/pgn`;
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      toast.error("Error Enter correct chess.com username..");
+      throw new Error(`Error fetching games: ${response.status}`);
+    }
+    let pgnData = await response.text();
+    return pgnData;
+  } catch (error) {
+    console.error("Error fetching PGN data:", error);
+  }
+};
+
+export {
+  getPlayerProfileInfo,
+  getAllPlayerGames,
+  getYearAndMonth,
+  getPgnsOfMonth,
+};

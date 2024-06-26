@@ -1,20 +1,22 @@
+import React, { useContext } from "react";
 import styles from "../styles/Input_SideBar.module.css";
 import Loading from "./Loading";
-import React from "react";
-export default function Input_SideBar({
-  username,
-  setUserName,
-  gamePeriod,
-  setGamePeriod,
-  setInputStartDate,
-  setInputEndDate,
-  loading,
-  maxRequestCount,
-  requestCount,
-  numOfGamesLoaded,
-}) {
+import { userInfoContext } from "../contexts/UserStaticContext";
+export default function Input_SideBar() {
+  const {
+    username,
+    setUserName,
+    setInputStartDate,
+    setInputEndDate,
+    gamePeriod,
+    setGamePeriod,
+    loading,
+    maxRequestCount,
+    requestCount,
+    numOfGamesLoaded,
+  } = useContext(userInfoContext);
   const handleChange = (e, callback) => {
-    callback(e.target.value.replace(/\s+/g, ''));
+    callback(e.target.value.replace(/\s+/g, ""));
   };
   const handleDateChange = (e, callback) => {
     let strdate = e.target.value;

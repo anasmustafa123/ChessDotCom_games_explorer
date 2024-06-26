@@ -1,43 +1,45 @@
-import React from "react";
-import { useState } from "react";
 import Input_SideBar from "./Input_SideBar";
 import OutPutSidebar from "./OutPutSidebar";
 import styles from "../styles/RightSidebar.module.css";
-import { getPlayerProfileInfo, getAllPlayerGames } from "../api/chessApiAccess";
-import { totalPgn, reduceOnMove } from "./modifyExplore";
-
-export default function RightSidebar({
-  username,
-  setUserName,
-  setTotalGames,
-  setPreFiltering,
-  setExplorerArray,
-  setTotalGamesSim,
-  inlineStyles,
-  explorerArray,
-  loaded,
-  setloaded,
-  filter,
-  setfilterby,
-  loadDataToIndexDb,
-  inputEndDate,
-  setInputEndDate,
-  inputStartDate,
-  setInputStartDate,
-  setpostFilteringFlag,
-  setpostFiltering,
-  currentMove,
-  currentMoveNum,
-  preFiltering,
-  movesSeq,
-  selectedColor,
-  setSelectedColor,
-}) {
-  const [gamePeriod, setGamePeriod] = useState("all");
-  const [loading, setLoading] = useState(false);
-  const [maxRequestCount, setMaxRequestCount] = useState(0);
-  const [requestCount, setRequestCount] = useState(0);
-  const [numOfGamesLoaded, setNumOfGamesLoaded] = useState(0);
+import {
+  getPlayerProfileInfo,
+  getAllPlayerGames,
+  getPgnsOfMonth,
+} from "../api/chessApiAccess";
+import { userInfoContext } from "../contexts/UserStaticContext";
+import { gameContext } from "../contexts/UserGameContext";
+import React, { useContext } from "react";
+import {
+  reduceOnColorChange,
+  reduceOnMove,
+  reducePgn,
+  reduceMultiple,
+} from "./gamesControl";
+import { loadDataToIndexDb } from "../indexDb/funs";
+export default function RightSidebar() {
+  const {
+    username,
+    inputStartDate,
+    setInputStartDate,
+    inputEndDate,
+    setInputEndDate,
+    setLoading,
+    setMaxRequestCount,
+    setRequestCount,
+    setNumOfGamesLoaded,
+  } = useContext(userInfoContext);
+  const {
+    setTotalGames,
+    setTotalGamesSim,
+    setExplorerArray,
+    currentMove,
+    setPreFiltering,
+    movesSeq,
+    selectedColor,
+    setCurrentMoveNum,
+    loaded,
+    setloaded,
+  } = useContext(gameContext);
 
   const getMonthCount = (finalDate) => {
     return (
@@ -93,7 +95,9 @@ export default function RightSidebar({
    * @callback incrementRequestCount
    */
   const incrementRequestCount = () => {
-    setRequestCount((prevRequestCount) => prevRequestCount + 1);
+    setRequestCount((prevRequestCount) => {
+      return prevRequestCount + 1;
+    });
   };
   /**
    * This callback will be called after loading the chess.com data for each month by `getAllPlayerGames`.
@@ -101,28 +105,17 @@ export default function RightSidebar({
    * @callback incrementNumOfGamesLoaded
    */
   const incrementNumOfGamesLoaded = (currentMonthGamesNum) => {
-    setNumOfGamesLoaded(
-      (prevNumOfGamesLoaded) => prevNumOfGamesLoaded + currentMonthGamesNum
-    );
+    setNumOfGamesLoaded((prevNumOfGamesLoaded) => {
+      return prevNumOfGamesLoaded + currentMonthGamesNum;
+    });
   };
 
   return (
-    <div className={styles.rightSidebarContainer} style={{ ...inlineStyles }}>
+    <div className={styles.rightSidebarContainer}>
       <h1>CHESS INSIGHT</h1>
       {!loaded ? (
         <>
-          <Input_SideBar
-            username={username}
-            setUserName={setUserName}
-            gamePeriod={gamePeriod}
-            setGamePeriod={setGamePeriod}
-            setInputStartDate={setInputStartDate}
-            setInputEndDate={setInputEndDate}
-            loading={loading}
-            maxRequestCount={maxRequestCount}
-            requestCount={requestCount}
-            numOfGamesLoaded={numOfGamesLoaded}
-          ></Input_SideBar>
+          <Input_SideBar></Input_SideBar>
           <button
             className={styles.submitBtn}
             onClick={async () => {
@@ -140,38 +133,52 @@ export default function RightSidebar({
                     incrementRequestCount,
                     incrementNumOfGamesLoaded
                   )
-                    .then(async (allGames) => {
+                    .then(async ({ allGames, allMoves }) => {
                       if (allGames) {
-                        setTotalGames(allGames);
                         setLoading(false);
                         setloaded(true);
-                        let newTotalGameSim = totalPgn(allGames);
-                        let prefilteringdata = newTotalGameSim.filter(
-                          (game) => {
-                            return (
-                              allGames[game.index].color.toLowerCase() ==
-                              selectedColor.toLowerCase()
-                            );
-                          }
-                        );
+                        setTotalGames(allGames);
+                        let newTotalGameSim = reducePgn(allGames, allMoves);
                         setTotalGamesSim(newTotalGameSim);
-                        setPreFiltering(prefilteringdata);
-                        let x = reduceOnMove(
-                          prefilteringdata,
-                          "",
-                          0,
-                          (games) => {
-                            return games;
-                          }
-                        ).explorerArray;
-                        await loadDataToIndexDb(
+                        let prefilteringdata = reduceOnColorChange(
+                          newTotalGameSim,
+                          selectedColor.toLowerCase(),
+                          allGames
+                        );
+
+                        let x = [];
+                        console.log({ movesSeq });
+                        if (movesSeq.length > 0) {
+                          setCurrentMoveNum(movesSeq.length + 1);
+                          x = reduceOnMove(
+                            prefilteringdata,
+                            currentMove,
+                            movesSeq.length,
+                            movesSeq,
+                            reduceMultiple
+                          );
+                          setPreFiltering(x.gamesAafterMove);
+                        } else {
+                          setPreFiltering(prefilteringdata);
+                          x = reduceOnMove(
+                            prefilteringdata,
+                            "",
+                            0,
+                            movesSeq,
+                            (games) => {
+                              return games;
+                            }
+                          );
+                        }
+                        setExplorerArray(x.explorerArray);
+                        loadDataToIndexDb(
+                          username,
                           true,
                           allGames,
                           newTotalGameSim,
                           { month: finalDate.smonth, year: finalDate.syear },
                           { year: finalDate.eyear, month: finalDate.emonth }
                         );
-                        setExplorerArray(x);
                       }
                     })
                     .catch((err) => {
@@ -187,23 +194,7 @@ export default function RightSidebar({
           </button>
         </>
       ) : (
-        <OutPutSidebar
-          username={username}
-          inputEndDate={inputEndDate}
-          inputStartDate={inputStartDate}
-          explorerArray={explorerArray}
-          filter={filter}
-          setfilterby={setfilterby}
-          setpostFilteringFlag={setpostFilteringFlag}
-          setpostFiltering={setpostFiltering}
-          currentMove={currentMove}
-          currentMoveNum={currentMoveNum}
-          setExplorerArray={setExplorerArray}
-          preFiltering={preFiltering}
-          movesSeq={movesSeq}
-          selectedColor={selectedColor}
-          setSelectedColor={setSelectedColor}
-        ></OutPutSidebar>
+        <OutPutSidebar></OutPutSidebar>
       )}
     </div>
   );
