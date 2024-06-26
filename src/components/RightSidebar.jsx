@@ -9,7 +9,12 @@ import {
 import { userInfoContext } from "../contexts/UserStaticContext";
 import { gameContext } from "../contexts/UserGameContext";
 import React, { useContext } from "react";
-import { reduceOnColorChange, reduceOnMove, reducePgn } from "./gamesControl";
+import {
+  reduceOnColorChange,
+  reduceOnMove,
+  reducePgn,
+  reduceMultiple,
+} from "./gamesControl";
 import { loadDataToIndexDb } from "../indexDb/funs";
 export default function RightSidebar() {
   const {
@@ -31,7 +36,7 @@ export default function RightSidebar() {
     setPreFiltering,
     movesSeq,
     selectedColor,
-    currentMoveNum,
+    setCurrentMoveNum,
     loaded,
     setloaded,
   } = useContext(gameContext);
@@ -142,12 +147,13 @@ export default function RightSidebar() {
                         );
 
                         let x = [];
-
+                        console.log({ movesSeq });
                         if (movesSeq.length > 0) {
+                          setCurrentMoveNum(movesSeq.length + 1);
                           x = reduceOnMove(
                             prefilteringdata,
                             currentMove,
-                            currentMoveNum - 1,
+                            movesSeq.length,
                             movesSeq,
                             reduceMultiple
                           );
